@@ -166,10 +166,14 @@ class TestLoadConfig:
         cortex_home = tmp_path / ".cortex"
         cortex_home.mkdir()
         config_path = cortex_home / "config.json"
-        config_path.write_text(json.dumps({
-            "decay_rate": 0.99,
-            "max_briefing_tokens": 5000,
-        }))
+        config_path.write_text(
+            json.dumps(
+                {
+                    "decay_rate": 0.99,
+                    "max_briefing_tokens": 5000,
+                }
+            )
+        )
 
         config = load_config(cortex_home)
         assert config.decay_rate == 0.99

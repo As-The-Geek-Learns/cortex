@@ -1,10 +1,8 @@
 """Tests for the Cortex EventStore and HookState."""
 
 import json
-from datetime import datetime, timedelta, timezone
-from pathlib import Path
 
-from memory_context_claude_ai.models import Event, EventType, create_event
+from memory_context_claude_ai.models import EventType, create_event
 from memory_context_claude_ai.store import EventStore, HookState
 
 
@@ -162,9 +160,7 @@ class TestEventStoreForBriefing:
         assert len(briefing["active_plan"]) >= 1
         assert briefing["active_plan"][0].type == EventType.PLAN_CREATED
 
-    def test_briefing_no_duplicates_across_sections(
-        self, event_store: EventStore, sample_events: list
-    ) -> None:
+    def test_briefing_no_duplicates_across_sections(self, event_store: EventStore, sample_events: list) -> None:
         """Events in immortal or active_plan don't appear in recent."""
         event_store.append_many(sample_events)
         briefing = event_store.load_for_briefing()

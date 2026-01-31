@@ -36,7 +36,6 @@ from memory_context_claude_ai.transcript import (
     strip_code_blocks,
 )
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -456,9 +455,7 @@ class TestExtractThinkingContent:
     def test_single_thinking_block(self):
         entry = TranscriptEntry(
             record_type="assistant",
-            content_blocks=[
-                {"type": "thinking", "thinking": "The user needs SQLite"}
-            ],
+            content_blocks=[{"type": "thinking", "thinking": "The user needs SQLite"}],
         )
         assert extract_thinking_content(entry) == "The user needs SQLite"
 
@@ -774,11 +771,13 @@ class TestTranscriptReader:
         offset1 = reader.last_offset
 
         # Append more content
-        line2 = json.dumps({
-            "type": "user",
-            "uuid": "u1",
-            "message": {"role": "user", "content": "Hello"},
-        })
+        line2 = json.dumps(
+            {
+                "type": "user",
+                "uuid": "u1",
+                "message": {"role": "user", "content": "Hello"},
+            }
+        )
         with open(transcript, "a") as f:
             f.write(line2 + "\n")
 
@@ -819,9 +818,9 @@ class TestTranscriptReader:
         """JSON arrays or primitives at top level should be skipped."""
         transcript = tmp_path / "arrays.jsonl"
         lines = [
-            '[1, 2, 3]',
+            "[1, 2, 3]",
             '"just a string"',
-            '42',
+            "42",
             '{"type": "summary", "summary": "valid", "leafUuid": "l1"}',
         ]
         transcript.write_text("\n".join(lines) + "\n")
@@ -1031,7 +1030,6 @@ class TestFindTranscriptPath:
         claude_dir.mkdir(parents=True)
 
         # Monkeypatch Path.home() to use our tmp_path
-        import memory_context_claude_ai.transcript as transcript_mod
 
         original_home = Path.home
         Path.home = staticmethod(lambda: tmp_path)
@@ -1042,8 +1040,6 @@ class TestFindTranscriptPath:
             Path.home = original_home
 
     def test_returns_none_for_missing_directory(self, tmp_path: Path):
-        import memory_context_claude_ai.transcript as transcript_mod
-
         original_home = Path.home
         Path.home = staticmethod(lambda: tmp_path)
         try:

@@ -18,7 +18,6 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
-
 # WHAT: Top-level record types in Claude Code JSONL transcripts.
 # WHY: Not all records are conversation messages. summary and
 # file-history-snapshot are metadata records that we parse but
@@ -147,26 +146,17 @@ class TranscriptEntry:
     @property
     def has_tool_use(self) -> bool:
         """True if any content block is a tool_use."""
-        return any(
-            isinstance(b, dict) and b.get("type") == CONTENT_TYPE_TOOL_USE
-            for b in self.content_blocks
-        )
+        return any(isinstance(b, dict) and b.get("type") == CONTENT_TYPE_TOOL_USE for b in self.content_blocks)
 
     @property
     def has_tool_result(self) -> bool:
         """True if any content block is a tool_result."""
-        return any(
-            isinstance(b, dict) and b.get("type") == CONTENT_TYPE_TOOL_RESULT
-            for b in self.content_blocks
-        )
+        return any(isinstance(b, dict) and b.get("type") == CONTENT_TYPE_TOOL_RESULT for b in self.content_blocks)
 
     @property
     def has_thinking(self) -> bool:
         """True if any content block is a thinking block."""
-        return any(
-            isinstance(b, dict) and b.get("type") == CONTENT_TYPE_THINKING
-            for b in self.content_blocks
-        )
+        return any(isinstance(b, dict) and b.get("type") == CONTENT_TYPE_THINKING for b in self.content_blocks)
 
 
 def parse_entry(raw: dict) -> TranscriptEntry:
