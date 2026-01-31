@@ -1,0 +1,48 @@
+# pyproject.toml - Python project configuration
+# Used by: ruff, pip, pytest, and other Python tools
+
+[project]
+name = "memory-context-claude-ai"
+version = "0.1.0"
+description = "Memory and context management with Claude AI"
+readme = "README.md"
+requires-python = ">=3.11"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+exclude = [
+    ".git",
+    "__pycache__",
+    "venv",
+    ".venv",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # Pyflakes
+    "I",   # isort (import sorting)
+    "B",   # flake8-bugbear (common bugs)
+    "C4",  # flake8-comprehensions
+]
+
+ignore = [
+    "E501",  # Line too long (handled by formatter)
+    "E402",  # Module level import not at top of file
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["memory_context_claude_ai"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v"
+pythonpath = ["src"]

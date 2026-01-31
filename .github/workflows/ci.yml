@@ -1,0 +1,152 @@
+# =============================================================================
+# CI Workflow for memory-context-claude-ai
+# =============================================================================
+# Runs on every push and pull request to main.
+#
+# Jobs:
+#   1. python-quality   - Lint and format check Python code
+#   2. python-security  - Scan Python dependencies for vulnerabilities
+#   3. python-tests     - Run test suite
+#   4. security-scan    - Semgrep static analysis
+#   5. secrets-scan     - Gitleaks for accidentally committed secrets
+# =============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+  checks: write
+  security-events: write
+
+jobs:
+  # ===========================================================================
+  # Python Code Quality
+  # ===========================================================================
+  python-quality:
+    name: Python Quality
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Run Ruff Linter
+        run: ruff check . --output-format=github
+
+      - name: Run Ruff Formatter Check
+        run: ruff format --check .
+
+  # ===========================================================================
+  # Python Dependency Security
+  # ===========================================================================
+  python-security:
+    name: Python Security
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install pip-audit
+        run: pip install pip-audit
+
+      - name: Run pip-audit
+        run: pip-audit --strict --vulnerability-service pypi
+        continue-on-error: true
+
+  # ===========================================================================
+  # Python Tests
+  # ===========================================================================
+  python-tests:
+    name: Python Tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest
+
+      - name: Run tests
+        run: pytest tests/ -v
+
+  # ===========================================================================
+  # Static Security Analysis (Semgrep)
+  # ===========================================================================
+  security-scan:
+    name: Security Scan (Semgrep)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/python
+            p/secrets
+
+  # ===========================================================================
+  # Secrets Scanning
+  # ===========================================================================
+  secrets-scan:
+    name: Secrets Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
