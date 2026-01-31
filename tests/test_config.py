@@ -5,12 +5,12 @@ from pathlib import Path
 
 from memory_context_claude_ai.config import (
     CortexConfig,
+    _default_cortex_home,
     get_config_path,
     get_cortex_home,
     get_project_dir,
     load_config,
     save_config,
-    _default_cortex_home,
 )
 
 

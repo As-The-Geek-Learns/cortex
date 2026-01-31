@@ -9,6 +9,7 @@
 #   3. python-tests     - Run test suite
 #   4. security-scan    - Semgrep static analysis
 #   5. secrets-scan     - Gitleaks for accidentally committed secrets
+#   6. workflow-verify  - Ironclad workflow gate (verify + ship dry-run)
 # =============================================================================
 
 name: CI
@@ -157,3 +158,40 @@ jobs:
 
       - name: Run Gitleaks
         run: ./gitleaks detect --source . --verbose
+
+  # ===========================================================================
+  # Workflow Verify (Ironclad gate)
+  # ===========================================================================
+  # Single job that runs full workflow:verify so PRs cannot merge without
+  # passing the same gate developers run locally (tests, lint, audit, hashes).
+  # AI review (Gemini) runs when GEMINI_API_KEY is set in repo secrets.
+  workflow-verify:
+    name: Workflow Verify
+    runs-on: ubuntu-latest
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt pytest ruff pip-audit
+
+      - name: Run workflow verify
+        run: npm run workflow:verify
+
+      - name: Run workflow ship (dry-run)
+        run: npm run workflow:ship -- --dry-run

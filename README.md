@@ -119,7 +119,7 @@ pre-commit run --all-files  # All hooks
 
 ## Development Workflow (Ironclad)
 
-This project uses a 4-phase workflow: **PLAN → EXECUTE → VERIFY → SHIP** with human checkpoints.
+This project uses a 4-phase workflow: **PLAN → EXECUTE → VERIFY → SHIP** with human checkpoints. Workflow adapted from [Ironclad Development Workflow](https://github.com/As-The-Geek-Learns/WorkflowExperiment).
 
 - **PLAN:** Create `.workflow/sessions/SESSION-YYYY-MM-DD-[slug]/plan.md` from `.workflow/templates/plan-template.md`; get approval before coding.
 - **EXECUTE:** Implement tasks; update session docs; run `npm run lint` / `ruff check .` as you go.
@@ -137,6 +137,24 @@ This project uses a 4-phase workflow: **PLAN → EXECUTE → VERIFY → SHIP** w
 | `npm run workflow:ship:pr` | Validate and create GitHub PR |
 
 **AI review:** Set `GEMINI_API_KEY` for Gemini-powered security and quality review. Results go to `.workflow/state/ai-review.json`.
+
+## Hook setup (Claude Code)
+
+Cortex provides three hook handlers that Claude Code invokes with JSON payloads on stdin. Configure your Claude Code hooks (e.g. in `~/.claude/settings.json` or your project’s Claude Code settings) so that:
+
+| Hook | Command |
+|------|---------|
+| **Stop** | `cortex stop` (or `python -m memory_context_claude_ai stop`) |
+| **PreCompact** | `cortex precompact` (or `python -m memory_context_claude_ai precompact`) |
+| **SessionStart** | `cortex session-start` (or `python -m memory_context_claude_ai session-start`) |
+
+Ensure the `cortex` entry point is on your PATH (e.g. `pip install -e .` in this repo). Claude Code sends a JSON object on stdin with fields such as `session_id`, `cwd`, and (for Stop) `transcript_path` and `stop_hook_active`. Cortex expects the payload schema described in the [research paper](docs/research/paper/cortex-research-paper.md) (Appendix E and §9.8). Briefings are written to `.claude/rules/cortex-briefing.md` in the project directory and are loaded automatically at session start.
+
+**First-time setup:** Install the package (`pip install -e .` or `pip install memory-context-claude-ai`), then run `cortex init` and add the printed JSON to your Claude Code hooks configuration (see [Claude Code hooks documentation](https://code.claude.com/docs/en/hooks-guide)). For Layer 3 extraction, copy `templates/cortex-memory-instructions.md` to your project’s `.claude/rules/` so Claude knows to use `[MEMORY: ...]` for important facts.
+
+**CLI commands:** `cortex reset` clears all Cortex memory for the current project (event store + hook state). `cortex status` prints project hash, event count, and last extraction time. `cortex --help` (or no args) prints usage.
+
+For hook configuration details, see the [Claude Code hooks documentation](https://code.claude.com/docs/en/hooks-guide).
 
 ## About
 

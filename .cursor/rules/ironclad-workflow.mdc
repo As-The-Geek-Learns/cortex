@@ -6,6 +6,8 @@ alwaysApply: true
 
 # Ironclad Development Workflow
 
+Source: https://github.com/As-The-Geek-Learns/WorkflowExperiment
+
 You are operating under a structured 4-phase workflow: PLAN -> EXECUTE -> VERIFY -> SHIP.
 Each phase has gates that must be satisfied before proceeding.
 

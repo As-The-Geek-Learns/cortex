@@ -56,7 +56,7 @@ if (!API_KEY) {
   process.exit(1);
 }
 
-// Review prompts (same as WorkflowExperiment)
+// Review prompts (same as https://github.com/As-The-Geek-Learns/WorkflowExperiment)
 const SECURITY_REVIEW_PROMPT = `You are a senior security engineer conducting a thorough code review. 
 Analyze the following code for security vulnerabilities and concerns.
 
