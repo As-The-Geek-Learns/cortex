@@ -173,5 +173,7 @@ def tmp_git_repo(tmp_path: Path) -> Path:
     readme.write_text("# Test Repo\n")
     subprocess.run(["git", "add", "."], cwd=repo, capture_output=True)
     subprocess.run(["git", "commit", "-m", "Initial commit"], cwd=repo, capture_output=True)
+    # Ensure branch is "main" so get_git_branch() matches sample_events on all platforms (CI may default to "master")
+    subprocess.run(["git", "branch", "-M", "main"], cwd=repo, capture_output=True)
 
     return repo
