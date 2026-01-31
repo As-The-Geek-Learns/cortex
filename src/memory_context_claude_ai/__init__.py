@@ -9,6 +9,12 @@ Public API:
     - CortexConfig, load_config, save_config: Configuration
     - EventStore, HookState: Storage
     - identify_project, get_project_hash: Project identity
+    - TranscriptEntry, TranscriptReader: Transcript parsing
+    - ToolCall, ToolResult: Tool interaction models
+    - extract_text_content, extract_thinking_content: Content extraction
+    - extract_tool_calls, extract_tool_results: Tool extraction
+    - strip_code_blocks: Code block removal for keyword matching
+    - find_transcript_path, find_latest_transcript: Transcript discovery
 """
 
 __version__ = "0.1.0"
@@ -17,6 +23,19 @@ from memory_context_claude_ai.config import CortexConfig, load_config, save_conf
 from memory_context_claude_ai.models import Event, EventType, create_event
 from memory_context_claude_ai.project import get_project_hash, identify_project
 from memory_context_claude_ai.store import EventStore, HookState
+from memory_context_claude_ai.transcript import (
+    ToolCall,
+    ToolResult,
+    TranscriptEntry,
+    TranscriptReader,
+    extract_text_content,
+    extract_thinking_content,
+    extract_tool_calls,
+    extract_tool_results,
+    find_latest_transcript,
+    find_transcript_path,
+    strip_code_blocks,
+)
 
 __all__ = [
     "CortexConfig",
@@ -24,9 +43,20 @@ __all__ = [
     "EventStore",
     "EventType",
     "HookState",
+    "ToolCall",
+    "ToolResult",
+    "TranscriptEntry",
+    "TranscriptReader",
     "create_event",
+    "extract_text_content",
+    "extract_thinking_content",
+    "extract_tool_calls",
+    "extract_tool_results",
+    "find_latest_transcript",
+    "find_transcript_path",
     "get_project_hash",
     "identify_project",
     "load_config",
     "save_config",
+    "strip_code_blocks",
 ]
