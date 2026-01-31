@@ -117,6 +117,27 @@ pytest tests/         # Test
 pre-commit run --all-files  # All hooks
 ```
 
+## Development Workflow (Ironclad)
+
+This project uses a 4-phase workflow: **PLAN → EXECUTE → VERIFY → SHIP** with human checkpoints.
+
+- **PLAN:** Create `.workflow/sessions/SESSION-YYYY-MM-DD-[slug]/plan.md` from `.workflow/templates/plan-template.md`; get approval before coding.
+- **EXECUTE:** Implement tasks; update session docs; run `npm run lint` / `ruff check .` as you go.
+- **VERIFY:** Run `npm run workflow:verify` (runs pytest, ruff, pip-audit, and optional Gemini AI review). Complete `.workflow/checklists/verify-checklist.md`; get human approval.
+- **SHIP:** Run `npm run workflow:ship` to validate file integrity; then `npm run workflow:ship:pr` to create a PR (optional).
+
+**Commands:**
+
+| Command | Description |
+|---------|-------------|
+| `npm run workflow:verify` | Full verification (tests, lint, pip-audit, AI review) |
+| `npm run workflow:verify:no-ai` | Verification without AI review |
+| `npm run workflow:ai-review` | Standalone AI code review (Gemini) |
+| `npm run workflow:ship` | Validate integrity vs verify-state.json |
+| `npm run workflow:ship:pr` | Validate and create GitHub PR |
+
+**AI review:** Set `GEMINI_API_KEY` for Gemini-powered security and quality review. Results go to `.workflow/state/ai-review.json`.
+
 ## About
 
 This research was conducted as part of the [As The Geek Learns](https://astgl.com) project, documenting the journey of building AI-powered developer tools. The entire research process — from problem definition through failure analysis — was conducted using Claude Code, creating a meta-experience: using an AI assistant with the context window problem to design a solution for the context window problem.

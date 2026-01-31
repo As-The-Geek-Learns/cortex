@@ -1,0 +1,107 @@
+---
+description: Ironclad Development Workflow - PLAN, EXECUTE, VERIFY, SHIP with human checkpoints
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Ironclad Development Workflow
+
+You are operating under a structured 4-phase workflow: PLAN -> EXECUTE -> VERIFY -> SHIP.
+Each phase has gates that must be satisfied before proceeding.
+
+## WORKFLOW PHASES
+
+### Phase 1: PLAN
+Before writing any code, create or update a plan document.
+
+**Required:**
+- Create `.workflow/sessions/SESSION-YYYY-MM-DD-[slug]/plan.md` using the template
+- Define problem statement and success criteria
+- Complete security considerations section
+- Break down tasks with dependencies
+- Get human approval before proceeding
+
+**Gate:** Human must approve the plan before EXECUTE phase begins.
+
+### Phase 2: EXECUTE
+Implement the planned tasks systematically.
+
+**Required:**
+- Work through tasks in dependency order
+- Create feature branch for the work
+- Update session documentation as you go
+- Mark tasks complete in plan.md as finished
+- Run linting and fix issues before proceeding (e.g. `ruff check .` / `npm run lint`)
+
+**Gate:** All planned tasks must be marked complete before VERIFY phase.
+
+### Phase 3: VERIFY
+Validate the implementation thoroughly.
+
+**Required:**
+- Run `node scripts/verify.js` (or `npm run workflow:verify`) to:
+  - Generate file hashes (src/, tests/)
+  - Run automated tests (pytest via npm test)
+  - Run linter (ruff via npm run lint)
+  - Run security audit (pip-audit via npm run audit)
+  - **Run AI code review (Gemini)** if GEMINI_API_KEY is set
+- Complete verification checklist
+- Address any AI review findings
+- Get human approval of verification results
+
+**AI Code Review:**
+Verification includes optional AI review using Google Gemini (security + quality).
+If AI review finds issues, review `.workflow/state/ai-review.json` and address CRITICAL/HIGH before shipping.
+
+**Gate:** Human must approve verification before SHIP phase.
+
+### Phase 4: SHIP
+Merge the verified code.
+
+**Required:**
+- Run `node scripts/ship.js` (or `npm run workflow:ship`) to validate file integrity
+- File hashes must match verification state
+- Create PR with evidence
+- **Get human approval for merge**
+
+**Gate:** File integrity must pass before PR creation.
+
+## HUMAN CHECKPOINTS
+
+1. **Plan Approval** - Before any code is written
+2. **Verification Approval** - After testing and AI review, before shipping
+3. **Ship Approval** - Final merge decision
+
+Never auto-proceed past these checkpoints. Always ask for explicit approval.
+
+## COMMANDS (this project)
+
+- `npm run workflow:verify` - Full verification (pytest, ruff, pip-audit, AI review)
+- `npm run workflow:verify:no-ai` - Verification without AI review
+- `npm run workflow:ai-review` - Run AI review only (Gemini)
+- `npm run workflow:ai-review:diff` - Review git diff only
+- `npm run workflow:ai-review:security` - Security-focused review
+- `npm run workflow:ship` - Validate integrity
+- `npm run workflow:ship:pr` - Validate and create GitHub PR
+
+**Environment:** Set `GEMINI_API_KEY` for AI code review.
+
+## FILE STRUCTURE
+
+- `.workflow/templates/` - plan, session, PR templates
+- `.workflow/checklists/` - security-review.md, verify-checklist.md
+- `.workflow/sessions/` - Active session plans and session docs
+- `.workflow/state/` - verify-state.json, ai-review.json
+- `scripts/` - verify.js, ai-review.js, ship.js (Node)
+
+## ENFORCING THE WORKFLOW
+
+When the user requests changes:
+1. Check if a plan exists for this work
+2. If no plan, switch to PLAN phase first
+3. If plan exists but not approved, request approval
+4. If executing, ensure you're following the task order
+5. If verifying, run all checks (including AI review if key set) before proceeding
+6. If shipping, validate integrity first
+
+Always be explicit about which phase you're in and what gates need to be satisfied.

@@ -1,0 +1,27 @@
+{
+  "name": "memory-context-claude-ai",
+  "version": "0.1.0",
+  "description": "Cortex: Event-sourced memory for Claude Code. Workflow scripts (verify, ship, ai-review) from Ironclad Development Workflow.",
+  "scripts": {
+    "test": "pytest tests/ -v",
+    "lint": "ruff check . && ruff format --check .",
+    "audit": "pip-audit --strict --vulnerability-service pypi",
+    "workflow:verify": "node scripts/verify.js",
+    "workflow:verify:no-ai": "node scripts/verify.js --skip-ai-review",
+    "workflow:ai-review": "node scripts/ai-review.js",
+    "workflow:ai-review:security": "node scripts/ai-review.js --security-focus",
+    "workflow:ai-review:diff": "node scripts/ai-review.js --diff",
+    "workflow:ship": "node scripts/ship.js",
+    "workflow:ship:pr": "node scripts/ship.js --create-pr"
+  },
+  "keywords": [
+    "cortex",
+    "memory",
+    "claude",
+    "workflow",
+    "verification",
+    "ai-review",
+    "gemini"
+  ],
+  "license": "MIT"
+}
