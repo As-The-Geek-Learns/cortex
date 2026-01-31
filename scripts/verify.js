@@ -96,6 +96,7 @@ function findFiles(baseDir) {
 function runCommand(command, description) {
   console.log("\n" + description + "...");
   try {
+    // nosemgrep: javascript.lang.security.detect-child-process.detect-child-process -- command is from package.json scripts, not user input
     const output = execSync(command, {
       encoding: "utf-8",
       stdio: ["pipe", "pipe", "pipe"],
