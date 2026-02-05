@@ -133,10 +133,12 @@ Respond in JSON format:
 // Utility functions
 
 // Sanitize strings before logging to prevent log injection attacks
-// (strips control characters that could manipulate terminal output)
+// (strips control characters and newlines that could manipulate terminal output or spoof log lines)
 function sanitizeForLog(value) {
   if (typeof value !== 'string') return String(value);
-  return value.replace(/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f\r]/g, '');
+  // Strip all control characters (0x00-0x1f) except tab (0x09), plus DEL (0x7f)
+  // Critically includes newlines (\n = 0x0a, \r = 0x0d) to prevent log line spoofing
+  return value.replace(/[\x00-\x08\x0a-\x1f\x7f]/g, '');
 }
 
 // Validate that a file path is within the project directory
@@ -318,6 +320,9 @@ async function callGemini(prompt, codeContext) {
       reject(new Error('Gemini API request timed out after 30 seconds'));
     });
 
+    // Intentional: This tool's purpose is to send code to Gemini API for security review.
+    // File content is validated via isPathWithinProject() before reading.
+    // lgtm[js/file-access-to-http]
     req.write(requestBody);
     req.end();
   });
@@ -541,6 +546,9 @@ async function main() {
   }
 
   // Write results (serialized from our own structured object, not raw API response)
+  // Intentional: This tool writes review results to a validated output path.
+  // Path traversal is prevented by the resolvedOutput validation above (lines 536-540).
+  // lgtm[js/http-to-file-access]
   fs.writeFileSync(resolvedOutput, JSON.stringify(results, null, 2));
 
   // Print summary

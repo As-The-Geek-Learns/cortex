@@ -18,6 +18,7 @@
 
 const crypto = require("crypto");
 const fs = require("fs");
+const os = require("os");
 const path = require("path");
 const { execSync } = require("child_process");
 
@@ -183,25 +184,40 @@ All ${integrityResults.verified} files match their verified hashes.
 `;
 
   const prTitle = "[Verified] " + branch;
-  const createCmd =
-    "gh pr create --title \"" +
-    prTitle +
-    "\" --body \"" +
-    prBody.replace(/"/g, '\\"') +
-    "\" --base " +
-    defaultBranch;
 
-  const result = runCommand(createCmd, options.dryRun);
+  // Write PR body to temp file to avoid shell injection issues
+  // (using --body-file instead of --body with escaped content)
+  const tempBodyFile = path.join(os.tmpdir(), "pr-body-" + Date.now() + ".md");
+  fs.writeFileSync(tempBodyFile, prBody, "utf-8");
 
-  if (result.success) {
-    console.log("Pull request created successfully!");
-    if (result.output) {
-      console.log("PR URL: " + result.output);
+  try {
+    const createCmd =
+      "gh pr create --title \"" +
+      prTitle.replace(/"/g, '\\"').replace(/\$/g, '\\$').replace(/`/g, '\\`') +
+      "\" --body-file \"" +
+      tempBodyFile +
+      "\" --base " +
+      defaultBranch;
+
+    const result = runCommand(createCmd, options.dryRun);
+
+    if (result.success) {
+      console.log("Pull request created successfully!");
+      if (result.output) {
+        console.log("PR URL: " + result.output);
+      }
+      return true;
+    } else {
+      console.error("Failed to create pull request:", result.error);
+      return false;
     }
-    return true;
-  } else {
-    console.error("Failed to create pull request:", result.error);
-    return false;
+  } finally {
+    // Clean up temp file
+    try {
+      fs.unlinkSync(tempBodyFile);
+    } catch (e) {
+      // Ignore cleanup errors
+    }
   }
 }
 
