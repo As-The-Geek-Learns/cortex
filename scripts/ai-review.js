@@ -322,8 +322,7 @@ async function callGemini(prompt, codeContext) {
 
     // Intentional: This tool's purpose is to send code to Gemini API for security review.
     // File content is validated via isPathWithinProject() before reading.
-    // lgtm[js/file-access-to-http]
-    req.write(requestBody);
+    req.write(requestBody); // lgtm[js/file-access-to-http]
     req.end();
   });
 }
@@ -490,7 +489,8 @@ async function main() {
       console.log('No security issues found.');
     }
   } catch (error) {
-    console.error('Security review failed: ' + sanitizeForLog(error.message));
+    // Error message sanitized via sanitizeForLog() which strips control chars including newlines
+    console.error('Security review failed: ' + sanitizeForLog(error.message)); // lgtm[js/log-injection]
     results.securityReview = { error: String(error.message) };
   }
 
@@ -518,7 +518,8 @@ async function main() {
         console.log('No quality issues found.');
       }
     } catch (error) {
-      console.error('Quality review failed: ' + sanitizeForLog(error.message));
+      // Error message sanitized via sanitizeForLog() which strips control chars including newlines
+      console.error('Quality review failed: ' + sanitizeForLog(error.message)); // lgtm[js/log-injection]
       results.qualityReview = { error: String(error.message) };
     }
   }
@@ -548,8 +549,7 @@ async function main() {
   // Write results (serialized from our own structured object, not raw API response)
   // Intentional: This tool writes review results to a validated output path.
   // Path traversal is prevented by the resolvedOutput validation above (lines 536-540).
-  // lgtm[js/http-to-file-access]
-  fs.writeFileSync(resolvedOutput, JSON.stringify(results, null, 2));
+  fs.writeFileSync(resolvedOutput, JSON.stringify(results, null, 2)); // lgtm[js/http-to-file-access]
 
   // Print summary
   console.log('\n' + '='.repeat(60));
