@@ -10,7 +10,7 @@ Covers:
 
 from pathlib import Path
 
-from memory_context_claude_ai.extractors import (
+from cortex.extractors import (
     SEMANTIC_PATTERNS,
     _deduplicate,
     _extract_plan_step_completions,
@@ -20,8 +20,8 @@ from memory_context_claude_ai.extractors import (
     extract_semantic,
     extract_structural,
 )
-from memory_context_claude_ai.models import EventType, create_event
-from memory_context_claude_ai.transcript import TranscriptEntry, TranscriptReader
+from cortex.models import EventType, create_event
+from cortex.transcript import TranscriptEntry, TranscriptReader
 
 # ============================================================
 # Helpers: Build TranscriptEntry objects for unit tests

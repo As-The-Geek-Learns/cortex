@@ -1,8 +1,8 @@
-# memory-context-claude-ai
+# Cortex
 
 ## Project Overview
 
-memory-context-claude-ai is a Python project for memory and context management with Claude AI.
+Cortex is a Python project for event-sourced memory and context management with Claude AI.
 
 **Tech Stack:**
 - Language: Python 3.11+
@@ -13,9 +13,9 @@ memory-context-claude-ai is a Python project for memory and context management w
 ## Project Structure
 
 ```
-memory-context-claude-ai/
+cortex/
 ├── src/
-│   └── memory_context_claude_ai/  # Main package
+│   └── cortex/  # Main package
 ├── tests/
 ├── docs/
 ├── .github/
@@ -56,7 +56,7 @@ See [SECURITY.md](./SECURITY.md) for full security policy.
 
 | File | Purpose |
 |------|---------|
-| `src/memory_context_claude_ai/` | Main package |
+| `src/cortex/` | Main package |
 | `.github/workflows/ci.yml` | CI/CD pipeline |
 | `.cursor/rules/*.mdc` | Cursor AI context rules |
 

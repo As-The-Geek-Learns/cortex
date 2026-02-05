@@ -11,8 +11,8 @@ orchestrator extract_events() runs all three and deduplicates results.
 
 import re
 
-from memory_context_claude_ai.models import EventType, content_hash, create_event
-from memory_context_claude_ai.transcript import (
+from cortex.models import EventType, content_hash, create_event
+from cortex.transcript import (
     TranscriptEntry,
     extract_text_content,
     extract_tool_calls,

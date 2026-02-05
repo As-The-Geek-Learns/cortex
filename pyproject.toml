@@ -2,14 +2,14 @@
 # Used by: ruff, pip, pytest, and other Python tools
 
 [project]
-name = "memory-context-claude-ai"
+name = "cortex"
 version = "0.1.0"
 description = "Cortex: Event-sourced memory for Claude Code"
 readme = "README.md"
 requires-python = ">=3.11"
 
 [project.scripts]
-cortex = "memory_context_claude_ai.__main__:main"
+cortex = "cortex.__main__:main"
 
 [build-system]
 requires = ["setuptools>=64", "wheel"]
@@ -45,7 +45,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["memory_context_claude_ai"]
+known-first-party = ["cortex"]
 
 [tool.ruff.format]
 quote-style = "double"

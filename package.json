@@ -1,5 +1,5 @@
 {
-  "name": "memory-context-claude-ai",
+  "name": "cortex",
   "version": "0.1.0",
   "description": "Cortex: Event-sourced memory for Claude Code. Workflow scripts (verify, ship, ai-review) from Ironclad Development Workflow.",
   "scripts": {

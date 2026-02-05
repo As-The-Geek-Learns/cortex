@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 
-from memory_context_claude_ai.config import (
+from cortex.config import (
     CortexConfig,
     _default_cortex_home,
     get_config_path,

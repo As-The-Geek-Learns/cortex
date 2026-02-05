@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from memory_context_claude_ai.project import (
+from cortex.project import (
     get_git_branch,
     get_git_info,
     get_project_hash,

@@ -3,14 +3,14 @@
 import io
 import sys
 
-from memory_context_claude_ai.hooks import (
+from cortex.hooks import (
     handle_precompact,
     handle_session_start,
     handle_stop,
     read_payload,
 )
-from memory_context_claude_ai.project import get_project_hash
-from memory_context_claude_ai.store import EventStore, HookState
+from cortex.project import get_project_hash
+from cortex.store import EventStore, HookState
 
 
 class TestReadPayload:
@@ -36,7 +36,7 @@ class TestHandleStop:
         self, tmp_path, tmp_cortex_home, sample_config, monkeypatch
     ):
         monkeypatch.setattr(
-            "memory_context_claude_ai.hooks.load_config",
+            "cortex.hooks.load_config",
             lambda: sample_config,
         )
         payload = {
@@ -54,7 +54,7 @@ class TestHandleStop:
         self, tmp_path, tmp_cortex_home, sample_config, fixtures_dir, monkeypatch
     ):
         monkeypatch.setattr(
-            "memory_context_claude_ai.hooks.load_config",
+            "cortex.hooks.load_config",
             lambda: sample_config,
         )
         transcript_src = fixtures_dir / "transcript_simple.jsonl"
@@ -85,7 +85,7 @@ class TestHandleStop:
 
     def test_stop_missing_transcript_path_returns_zero(self, tmp_path, sample_config, monkeypatch):
         monkeypatch.setattr(
-            "memory_context_claude_ai.hooks.load_config",
+            "cortex.hooks.load_config",
             lambda: sample_config,
         )
         payload = {"cwd": str(tmp_path), "session_id": "s1"}
@@ -99,7 +99,7 @@ class TestHandlePrecompact:
         self, tmp_path, tmp_cortex_home, tmp_git_repo, sample_config, sample_events, monkeypatch
     ):
         monkeypatch.setattr(
-            "memory_context_claude_ai.hooks.load_config",
+            "cortex.hooks.load_config",
             lambda: sample_config,
         )
         project_hash = get_project_hash(str(tmp_git_repo))
@@ -119,7 +119,7 @@ class TestHandlePrecompact:
 
     def test_precompact_creates_briefing_dir(self, tmp_git_repo, tmp_cortex_home, sample_config, monkeypatch):
         monkeypatch.setattr(
-            "memory_context_claude_ai.hooks.load_config",
+            "cortex.hooks.load_config",
             lambda: sample_config,
         )
         payload = {"cwd": str(tmp_git_repo)}
@@ -134,7 +134,7 @@ class TestHandleSessionStart:
         self, tmp_path, tmp_cortex_home, tmp_git_repo, sample_config, sample_events, monkeypatch
     ):
         monkeypatch.setattr(
-            "memory_context_claude_ai.hooks.load_config",
+            "cortex.hooks.load_config",
             lambda: sample_config,
         )
         project_hash = get_project_hash(str(tmp_git_repo))
@@ -156,7 +156,7 @@ class TestHandleSessionStart:
         self, tmp_path, tmp_cortex_home, sample_config, monkeypatch
     ):
         monkeypatch.setattr(
-            "memory_context_claude_ai.hooks.load_config",
+            "cortex.hooks.load_config",
             lambda: sample_config,
         )
         payload = {"cwd": str(tmp_path)}

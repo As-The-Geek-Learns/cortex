@@ -1,1 +1,1 @@
-"""Tests for memory-context-claude-ai."""
+"""Tests for cortex."""

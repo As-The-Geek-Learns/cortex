@@ -7,10 +7,10 @@ tiered inclusion (immortal, active plan, recent).
 
 from pathlib import Path
 
-from memory_context_claude_ai.config import CortexConfig, load_config
-from memory_context_claude_ai.models import Event
-from memory_context_claude_ai.project import get_project_hash
-from memory_context_claude_ai.store import EventStore
+from cortex.config import CortexConfig, load_config
+from cortex.models import Event
+from cortex.project import get_project_hash
+from cortex.store import EventStore
 
 # Approximate characters per token for budget enforcement (conservative for English/code).
 CHARS_PER_TOKEN = 4

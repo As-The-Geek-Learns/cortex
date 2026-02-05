@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-We actively support the latest version of memory-context-claude-ai. Security updates are provided for the current release.
+We actively support the latest version of Cortex. Security updates are provided for the current release.
 
 | Version | Supported          |
 | ------- | ------------------ |
@@ -27,7 +27,7 @@ We will respond within 48 hours and work with you to address the issue.
 
 ### For Users
 
-- Keep memory-context-claude-ai updated to the latest version
+- Keep Cortex updated to the latest version
 - Use strong system-level encryption for your device
 - Be cautious when sharing database/export files
 - Review exported data before sharing

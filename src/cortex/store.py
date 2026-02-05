@@ -11,8 +11,8 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-from memory_context_claude_ai.config import CortexConfig, get_project_dir
-from memory_context_claude_ai.models import (
+from cortex.config import CortexConfig, get_project_dir
+from cortex.models import (
     Event,
     EventType,
     content_hash,

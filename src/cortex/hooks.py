@@ -10,12 +10,12 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from memory_context_claude_ai.briefing import write_briefing_to_file
-from memory_context_claude_ai.config import load_config
-from memory_context_claude_ai.extractors import extract_events
-from memory_context_claude_ai.project import identify_project
-from memory_context_claude_ai.store import EventStore, HookState
-from memory_context_claude_ai.transcript import (
+from cortex.briefing import write_briefing_to_file
+from cortex.config import load_config
+from cortex.extractors import extract_events
+from cortex.project import identify_project
+from cortex.store import EventStore, HookState
+from cortex.transcript import (
     TranscriptReader,
     find_latest_transcript,
     find_transcript_path,

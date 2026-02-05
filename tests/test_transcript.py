@@ -15,7 +15,7 @@ from pathlib import Path
 
 import pytest
 
-from memory_context_claude_ai.transcript import (
+from cortex.transcript import (
     CONTENT_TYPE_TEXT,
     CONTENT_TYPE_THINKING,
     CONTENT_TYPE_TOOL_RESULT,

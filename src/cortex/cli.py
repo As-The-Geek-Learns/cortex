@@ -9,9 +9,9 @@ import json
 import os
 import sys
 
-from memory_context_claude_ai.config import load_config
-from memory_context_claude_ai.project import identify_project
-from memory_context_claude_ai.store import EventStore, HookState
+from cortex.config import load_config
+from cortex.project import identify_project
+from cortex.store import EventStore, HookState
 
 # Default state keys for clearing HookState (must match HookState.load() defaults).
 _RESET_STATE = {

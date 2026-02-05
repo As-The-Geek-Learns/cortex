@@ -4,10 +4,10 @@ from pathlib import Path
 
 import pytest
 
-from memory_context_claude_ai.briefing import generate_briefing, write_briefing_to_file
-from memory_context_claude_ai.config import CortexConfig
-from memory_context_claude_ai.models import EventType, create_event
-from memory_context_claude_ai.store import EventStore
+from cortex.briefing import generate_briefing, write_briefing_to_file
+from cortex.config import CortexConfig
+from cortex.models import EventType, create_event
+from cortex.store import EventStore
 
 
 class TestGenerateBriefingEmpty:

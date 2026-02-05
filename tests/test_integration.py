@@ -6,11 +6,11 @@ generation, and validates multi-session context continuity.
 
 from datetime import datetime, timedelta, timezone
 
-from memory_context_claude_ai.briefing import generate_briefing, write_briefing_to_file
-from memory_context_claude_ai.hooks import handle_session_start, handle_stop
-from memory_context_claude_ai.models import EventType, create_event
-from memory_context_claude_ai.project import get_project_hash
-from memory_context_claude_ai.store import EventStore, HookState
+from cortex.briefing import generate_briefing, write_briefing_to_file
+from cortex.hooks import handle_session_start, handle_stop
+from cortex.models import EventType, create_event
+from cortex.project import get_project_hash
+from cortex.store import EventStore, HookState
 
 
 class TestE2EPipeline:
@@ -20,7 +20,7 @@ class TestE2EPipeline:
         self, tmp_path, tmp_cortex_home, tmp_git_repo, sample_config, fixtures_dir, monkeypatch
     ):
         """E2E: transcript → Stop hook → extraction → SessionStart → briefing file."""
-        monkeypatch.setattr("memory_context_claude_ai.hooks.load_config", lambda: sample_config)
+        monkeypatch.setattr("cortex.hooks.load_config", lambda: sample_config)
 
         # Use transcript_mixed.jsonl: has tool calls, thinking, TodoWrite, code blocks
         transcript_src = fixtures_dir / "transcript_mixed.jsonl"
@@ -59,7 +59,7 @@ class TestE2EPipeline:
         self, tmp_path, tmp_cortex_home, tmp_git_repo, sample_config, fixtures_dir, monkeypatch
     ):
         """Stop hook with incremental reads: second call only processes new lines."""
-        monkeypatch.setattr("memory_context_claude_ai.hooks.load_config", lambda: sample_config)
+        monkeypatch.setattr("cortex.hooks.load_config", lambda: sample_config)
 
         transcript_path = tmp_git_repo / "transcript.jsonl"
         # Write first 3 lines
@@ -101,7 +101,7 @@ class TestMultiSessionScenario:
         self, tmp_path, tmp_cortex_home, tmp_git_repo, sample_config, monkeypatch
     ):
         """Events from 5 sessions → briefing with Decisions, Active Plan, Recent sections."""
-        monkeypatch.setattr("memory_context_claude_ai.hooks.load_config", lambda: sample_config)
+        monkeypatch.setattr("cortex.hooks.load_config", lambda: sample_config)
 
         project_hash = get_project_hash(str(tmp_git_repo))
         store = EventStore(project_hash, sample_config)
@@ -231,7 +231,7 @@ class TestMultiSessionScenario:
 
     def test_plan_continuity_across_sessions(self, tmp_path, tmp_cortex_home, tmp_git_repo, sample_config, monkeypatch):
         """Most recent PLAN_CREATED + its completed steps appear in Active Plan section."""
-        monkeypatch.setattr("memory_context_claude_ai.hooks.load_config", lambda: sample_config)
+        monkeypatch.setattr("cortex.hooks.load_config", lambda: sample_config)
 
         project_hash = get_project_hash(str(tmp_git_repo))
         store = EventStore(project_hash, sample_config)
@@ -294,7 +294,7 @@ class TestBudgetOverflow:
         self, tmp_path, tmp_cortex_home, tmp_git_repo, sample_config, monkeypatch
     ):
         """500 immortal events → briefing respects max_briefing_tokens."""
-        monkeypatch.setattr("memory_context_claude_ai.hooks.load_config", lambda: sample_config)
+        monkeypatch.setattr("cortex.hooks.load_config", lambda: sample_config)
 
         project_hash = get_project_hash(str(tmp_git_repo))
         store = EventStore(project_hash, sample_config)
@@ -327,8 +327,8 @@ class TestRegressionFromFixtures:
 
     def test_extract_from_all_fixtures(self, tmp_path, tmp_cortex_home, tmp_git_repo, sample_config, fixtures_dir):
         """Parse each fixture → extract events → assert expected types present."""
-        from memory_context_claude_ai.extractors import extract_events
-        from memory_context_claude_ai.transcript import TranscriptReader
+        from cortex.extractors import extract_events
+        from cortex.transcript import TranscriptReader
 
         fixtures = [
             ("transcript_simple.jsonl", ["COMMAND_RUN"]),
@@ -357,10 +357,10 @@ class TestRegressionFromFixtures:
         self, tmp_path, tmp_cortex_home, tmp_git_repo, sample_config, fixtures_dir, monkeypatch
     ):
         """Full pipeline: transcript_mixed.jsonl → extract → store → briefing → assert keywords."""
-        monkeypatch.setattr("memory_context_claude_ai.hooks.load_config", lambda: sample_config)
+        monkeypatch.setattr("cortex.hooks.load_config", lambda: sample_config)
 
-        from memory_context_claude_ai.extractors import extract_events
-        from memory_context_claude_ai.transcript import TranscriptReader
+        from cortex.extractors import extract_events
+        from cortex.transcript import TranscriptReader
 
         fixture_path = fixtures_dir / "transcript_mixed.jsonl"
         reader = TranscriptReader(fixture_path)

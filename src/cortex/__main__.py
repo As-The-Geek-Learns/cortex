@@ -8,13 +8,13 @@ Usage:
     cortex status        # show project hash, event count, last extraction
     cortex init          # print hook JSON for Claude Code settings
 
-    python -m memory_context_claude_ai stop   # same
+    python -m cortex stop   # same
 """
 
 import sys
 
-from memory_context_claude_ai.cli import cmd_init, cmd_reset, cmd_status
-from memory_context_claude_ai.hooks import (
+from cortex.cli import cmd_init, cmd_reset, cmd_status
+from cortex.hooks import (
     handle_precompact,
     handle_session_start,
     handle_stop,

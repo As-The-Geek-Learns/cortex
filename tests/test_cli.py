@@ -4,16 +4,16 @@ import json
 import sys
 from io import StringIO
 
-from memory_context_claude_ai.cli import cmd_init, cmd_reset, cmd_status, get_init_hook_json
-from memory_context_claude_ai.project import get_project_hash
-from memory_context_claude_ai.store import EventStore, HookState
+from cortex.cli import cmd_init, cmd_reset, cmd_status, get_init_hook_json
+from cortex.project import get_project_hash
+from cortex.store import EventStore, HookState
 
 
 class TestCmdReset:
     """Test cortex reset: clear store + state for project."""
 
     def test_reset_clears_store_and_state(self, tmp_path, tmp_cortex_home, sample_config, sample_events, monkeypatch):
-        monkeypatch.setattr("memory_context_claude_ai.cli.load_config", lambda: sample_config)
+        monkeypatch.setattr("cortex.cli.load_config", lambda: sample_config)
         project_hash = get_project_hash(str(tmp_path))
         store = EventStore(project_hash, sample_config)
         state = HookState(project_hash, sample_config)
@@ -31,7 +31,7 @@ class TestCmdReset:
         assert loaded["last_extraction_time"] == ""
 
     def test_reset_prints_confirmation(self, tmp_path, tmp_cortex_home, sample_config, monkeypatch):
-        monkeypatch.setattr("memory_context_claude_ai.cli.load_config", lambda: sample_config)
+        monkeypatch.setattr("cortex.cli.load_config", lambda: sample_config)
         project_hash = get_project_hash(str(tmp_path))
         old_stdout = sys.stdout
         try:
@@ -53,7 +53,7 @@ class TestCmdStatus:
     """Test cortex status: project hash, event count, last extraction."""
 
     def test_status_shows_project_and_count(self, tmp_path, tmp_cortex_home, sample_config, sample_events, monkeypatch):
-        monkeypatch.setattr("memory_context_claude_ai.cli.load_config", lambda: sample_config)
+        monkeypatch.setattr("cortex.cli.load_config", lambda: sample_config)
         project_hash = get_project_hash(str(tmp_path))
         store = EventStore(project_hash, sample_config)
         store.append_many(sample_events[:2])
@@ -71,7 +71,7 @@ class TestCmdStatus:
         assert "project:" in out or "hash:" in out
 
     def test_status_zero_events(self, tmp_path, tmp_cortex_home, sample_config, monkeypatch):
-        monkeypatch.setattr("memory_context_claude_ai.cli.load_config", lambda: sample_config)
+        monkeypatch.setattr("cortex.cli.load_config", lambda: sample_config)
         old_stdout = sys.stdout
         try:
             sys.stdout = StringIO()

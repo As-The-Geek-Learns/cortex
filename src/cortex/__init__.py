@@ -24,25 +24,25 @@ Public API:
 
 __version__ = "0.1.0"
 
-from memory_context_claude_ai.briefing import generate_briefing, write_briefing_to_file
-from memory_context_claude_ai.cli import cmd_init, cmd_reset, cmd_status, get_init_hook_json
-from memory_context_claude_ai.config import CortexConfig, load_config, save_config
-from memory_context_claude_ai.extractors import (
+from cortex.briefing import generate_briefing, write_briefing_to_file
+from cortex.cli import cmd_init, cmd_reset, cmd_status, get_init_hook_json
+from cortex.config import CortexConfig, load_config, save_config
+from cortex.extractors import (
     extract_events,
     extract_explicit,
     extract_semantic,
     extract_structural,
 )
-from memory_context_claude_ai.hooks import (
+from cortex.hooks import (
     handle_precompact,
     handle_session_start,
     handle_stop,
     read_payload,
 )
-from memory_context_claude_ai.models import Event, EventType, create_event
-from memory_context_claude_ai.project import get_project_hash, identify_project
-from memory_context_claude_ai.store import EventStore, HookState
-from memory_context_claude_ai.transcript import (
+from cortex.models import Event, EventType, create_event
+from cortex.project import get_project_hash, identify_project
+from cortex.store import EventStore, HookState
+from cortex.transcript import (
     ToolCall,
     ToolResult,
     TranscriptEntry,

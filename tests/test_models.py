@@ -2,7 +2,7 @@
 
 from datetime import datetime, timedelta, timezone
 
-from memory_context_claude_ai.models import (
+from cortex.models import (
     DEFAULT_SALIENCE,
     IMMORTAL_TYPES,
     Event,

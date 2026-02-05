@@ -2,8 +2,8 @@
 
 import json
 
-from memory_context_claude_ai.models import EventType, create_event
-from memory_context_claude_ai.store import EventStore, HookState
+from cortex.models import EventType, create_event
+from cortex.store import EventStore, HookState
 
 
 class TestEventStoreBasics:

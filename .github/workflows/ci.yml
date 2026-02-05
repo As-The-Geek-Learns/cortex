@@ -1,5 +1,5 @@
 # =============================================================================
-# CI Workflow for memory-context-claude-ai
+# CI Workflow for cortex
 # =============================================================================
 # Runs on every push and pull request to main.
 #
