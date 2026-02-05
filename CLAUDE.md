@@ -21,7 +21,6 @@ cortex/
 ├── .github/
 │   ├── workflows/         # CI/CD
 │   └── SECURITY-REVIEW.md # Security checklist
-├── .cursor/rules/         # Cursor AI rules
 ├── SECURITY.md            # Security policy
 └── pyproject.toml
 ```
@@ -58,7 +57,6 @@ See [SECURITY.md](./SECURITY.md) for full security policy.
 |------|---------|
 | `src/cortex/` | Main package |
 | `.github/workflows/ci.yml` | CI/CD pipeline |
-| `.cursor/rules/*.mdc` | Cursor AI context rules |
 
 ## Common Tasks
 
