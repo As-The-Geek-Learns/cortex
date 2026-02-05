@@ -92,7 +92,8 @@ function findFiles(baseDir) {
 function runCommand(command, description) {
   console.log('\n' + description + '...');
   try {
-    const output = execSync(command, { 
+    // nosemgrep: javascript.lang.security.detect-child-process.detect-child-process -- commands are hardcoded internal scripts (npm test/lint/audit), not user input
+    const output = execSync(command, {
       encoding: 'utf-8',
       stdio: ['pipe', 'pipe', 'pipe']
     });
