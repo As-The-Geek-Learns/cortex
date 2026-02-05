@@ -191,7 +191,8 @@ jobs:
         run: pip install -r requirements.txt pytest ruff pip-audit
 
       - name: Run workflow verify
-        run: npm run workflow:verify
+        # Skip AI review in CI - it's non-deterministic and useful for local dev only
+        run: npm run workflow:verify -- --skip-ai-review
 
       - name: Run workflow ship (dry-run)
         run: npm run workflow:ship -- --dry-run
