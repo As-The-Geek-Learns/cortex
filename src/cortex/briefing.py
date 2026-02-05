@@ -43,6 +43,7 @@ def generate_briefing(
     if project_hash is None and project_path is None:
         raise ValueError("Either project_hash or project_path must be provided")
     if project_hash is None:
+        assert project_path is not None  # Guaranteed by check above
         project_hash = get_project_hash(project_path)
 
     config = config or load_config()
