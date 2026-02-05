@@ -111,14 +111,14 @@ The `TranscriptBuilder` handles three pieces of state that callers shouldn't nee
 
 ## Open Questions / Next Steps
 
-- [ ] **Commit the new scripts** — 5 new files + 1 generated report to add
+- [x] **Commit the new scripts** — 5 new files + 1 generated report committed and pushed
+- [x] **CI integration** — Added `phase2-integration` job to `.github/workflows/ci.yml`. Runs on every push/PR to main alongside the existing 7 jobs. ~3 second runtime, zero external dependencies.
 - [ ] **Phase 3 automation** — Baseline data collection (5-10 sessions without Cortex) could potentially be automated with a similar synthetic approach, though it measures human-perceived quality which is harder to quantify programmatically
 - [ ] **Phase 4 automation** — A/B comparison would benefit from automated metric collection, even if the sessions themselves are manual
-- [ ] **CI integration** — The Phase 2 automation script could run in GitHub Actions as part of the test suite (it's fast — ~3 seconds)
 - [ ] **Real Claude Code validation** — The one thing these scripts cannot test: does Claude actually give better responses when informed by the briefing? That remains a manual, subjective evaluation
 
 ---
 
-*Session duration: ~45 minutes*
-*Files created: 6 (1,765 lines)*
+*Session duration: ~60 minutes*
+*Files created: 7 (1,765 lines + CI workflow update)*
 *Tests: 5/5 automated tests passing, 331/331 existing tests passing*

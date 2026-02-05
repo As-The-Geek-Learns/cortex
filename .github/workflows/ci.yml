@@ -4,12 +4,14 @@
 # Runs on every push and pull request to main.
 #
 # Jobs:
-#   1. python-quality   - Lint and format check Python code
-#   2. python-security  - Scan Python dependencies for vulnerabilities
-#   3. python-tests     - Run test suite
-#   4. security-scan    - Semgrep static analysis
-#   5. secrets-scan     - Gitleaks for accidentally committed secrets
-#   6. workflow-verify  - Ironclad workflow gate (verify + ship dry-run)
+#   1. python-quality       - Lint and format check Python code
+#   2. python-typecheck     - MyPy type checking
+#   3. python-security      - Scan Python dependencies for vulnerabilities
+#   4. python-tests         - Run unit test suite
+#   5. phase2-integration   - Phase 2 end-to-end pipeline tests
+#   6. security-scan        - Semgrep static analysis
+#   7. secrets-scan         - Gitleaks for accidentally committed secrets
+#   8. workflow-verify      - Ironclad workflow gate (verify + ship dry-run)
 # =============================================================================
 
 name: CI
@@ -133,6 +135,32 @@ jobs:
 
       - name: Run tests
         run: pytest tests/ -v
+
+  # ===========================================================================
+  # Phase 2 Integration Tests
+  # ===========================================================================
+  # WHAT: Runs the Phase 2 end-to-end pipeline tests.
+  # WHY: Exercises the full extraction → storage → briefing pipeline using
+  #       synthetic transcripts. Catches regressions in the integration
+  #       between hooks, extractors, store, and briefing generation.
+  #       Runs in ~3 seconds with zero external dependencies.
+  phase2-integration:
+    name: Phase 2 Integration
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Run Phase 2 tests
+        run: python -m scripts.testing.run_phase2
 
   # ===========================================================================
   # Static Security Analysis (Semgrep)
