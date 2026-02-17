@@ -1,0 +1,19 @@
+# .ai_config.toml — Qodo context engine config
+# WHAT: Tells Qodo which files to index for smarter suggestions
+# WHY: Excludes noise so AI focuses on actual source code
+
+[file_filters]
+exclude = [
+  'node_modules/**',
+  '.venv/**',
+  'venv/**',
+  '__pycache__/**',
+  'dist/**',
+  'build/**',
+  'coverage/**',
+  '.git/**',
+  '*.min.js',
+  '*.map',
+  'package-lock.json',
+  'yarn.lock',
+]
