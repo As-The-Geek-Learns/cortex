@@ -1,0 +1,33 @@
+# .codiumai.toml — Qodo Gen test generation config
+# WHAT: Configures how Qodo generates tests for this project
+# WHY: Ensures generated tests match our style and framework
+# NOTE: Mixed repo — Qodo auto-detects language per file.
+#       Pytest for .py files, Jest for .js/.ts files.
+
+[tests]
+# Pytest is set as default for Python files.
+# For JS/TS files, Qodo will auto-detect Jest/Vitest/Mocha.
+framework = "Pytest"
+
+# Start without mocks — learn real behavior first.
+use_mocks = false
+
+# 4 tests gives good variety (happy path, edge cases, errors)
+num_desired_tests = 4
+
+# Reference test — Python style (Qodo adapts for JS/TS automatically)
+reference_test = """
+def test_should_return_expected_value_when_given_valid_input():
+    # GIVEN: Set up test conditions
+    input_data = {"key": "value"}
+
+    # WHEN: Execute the function under test
+    result = my_function(input_data)
+
+    # THEN: Verify the result
+    assert result == expected_value
+"""
+
+[tests.javascript]
+# Override for JS/TS files in this mixed repo
+# overrideTestRunScript = "npx jest --runTestsByPath TEST_FILEPATH"

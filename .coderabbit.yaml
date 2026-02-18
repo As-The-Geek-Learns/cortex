@@ -1,0 +1,110 @@
+# .coderabbit.yaml — CodeRabbit configuration
+# WHAT: Controls how CodeRabbit reviews PRs and local changes
+# WHY: Reduces noise, focuses on actionable feedback
+
+language: "en-US"
+tone_instructions: "Be concise. Focus on bugs, security, and performance. Skip minor style suggestions."
+
+reviews:
+  # "chill" = fewer, high-value comments (bugs, security, logic)
+  # "assertive" = nitpicky, catches everything including style
+  profile: "chill"
+
+  # PR summary features
+  high_level_summary: true
+  sequence_diagrams: true
+  collapse_walkthrough: true
+  review_status: true
+
+  # Disable features not useful for solo dev
+  poem: false
+  suggested_reviewers: false
+  suggested_labels: false
+  related_prs: false
+
+  # Auto-review settings (for GitHub App PR reviews)
+  auto_review:
+    enabled: true
+    drafts: false
+    ignore_title_keywords:
+      - "WIP"
+      - "DO NOT MERGE"
+    base_branches:
+      - "main"
+
+  # Language-specific review instructions
+  path_instructions:
+    - path: "**/*.py"
+      instructions: >
+        Check for proper error handling, input validation, and PEP 8.
+        Verify type hints where applicable. Flag any hardcoded secrets.
+    - path: "**/*.js"
+      instructions: >
+        Check for const vs let, proper async/await, and XSS risks.
+        Flag any hardcoded secrets or API keys.
+    - path: "**/*.ts"
+      instructions: >
+        Check for proper typing, avoid 'any'. Verify error handling.
+        Flag any hardcoded secrets or API keys.
+    - path: "**/*.ps1"
+      instructions: >
+        Check for Verb-Noun naming, full parameter names, try/catch.
+    - path: "tests/**"
+      instructions: >
+        Ensure tests cover edge cases and have descriptive names.
+        Light review only.
+    - path: "docs/**"
+      instructions: >
+        Check for accuracy. Light review only.
+
+  # Skip generated/noisy files
+  path_filters:
+    - "!dist/**"
+    - "!build/**"
+    - "!node_modules/**"
+    - "!*.lock"
+    - "!package-lock.json"
+    - "!*.min.js"
+    - "!*.min.css"
+    - "!coverage/**"
+    - "!__pycache__/**"
+
+  # Auto-generate docstrings and test suggestions on PRs
+  finishing_touches:
+    docstrings:
+      enabled: true
+    unit_tests:
+      enabled: true
+
+# Enable linters that match local tooling
+tools:
+  ruff:
+    enabled: true
+  eslint:
+    enabled: true
+  shellcheck:
+    enabled: true
+  markdownlint:
+    enabled: true
+  gitleaks:
+    enabled: true
+  yamllint:
+    enabled: true
+  actionlint:
+    enabled: true
+
+chat:
+  auto_reply: true
+
+# Use CLAUDE.md as coding standards reference
+knowledge_base:
+  learnings:
+    scope: auto
+  issues:
+    scope: auto
+  web_search:
+    enabled: true
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - "CLAUDE.md"
