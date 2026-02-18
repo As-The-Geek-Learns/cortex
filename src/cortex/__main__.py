@@ -29,7 +29,16 @@ from cortex.hooks import (
     read_payload,
 )
 
-USAGE = "Usage: cortex <stop|precompact|session-start|user-prompt-submit|reset|status|init|upgrade|mcp-server>\n\nCommands:\n  init [--setup] [--force]  Print hook JSON; --setup creates .claude/rules/ files\n  upgrade [--dry-run] [-f]  Migrate to next storage tier\n  status                    Show project info and event count\n  reset                     Clear all Cortex memory for project\n  mcp-server                Start MCP server (Tier 3)\n"
+USAGE = (
+    "Usage: cortex <stop|precompact|session-start|user-prompt-submit|"
+    "reset|status|init|upgrade|mcp-server>\n\n"
+    "Commands:\n"
+    "  init [--setup] [--force]  Print hook JSON; --setup creates .claude/rules/ files\n"
+    "  upgrade [--dry-run] [-f]  Migrate to next storage tier\n"
+    "  status                    Show project info and event count\n"
+    "  reset                     Clear all Cortex memory for project\n"
+    "  mcp-server                Start MCP server (Tier 3)\n"
+)
 
 
 def main() -> None:

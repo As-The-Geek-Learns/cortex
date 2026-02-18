@@ -236,7 +236,13 @@ def setup_claude_rules(cwd: str, force: bool = False) -> dict:
         Dict with 'created', 'skipped', and 'errors' lists.
     """
     result: dict = {"created": [], "skipped": [], "errors": []}
-    project_path = Path(cwd)
+
+    # Validate cwd is not empty or whitespace
+    if not cwd or not cwd.strip():
+        result["errors"].append("Invalid project directory: cwd is empty or whitespace")
+        return result
+
+    project_path = Path(cwd.strip())
     rules_dir = project_path / ".claude" / "rules"
 
     # Create .claude/rules/ directory
