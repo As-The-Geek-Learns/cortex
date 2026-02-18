@@ -8,6 +8,8 @@ Usage:
     cortex reset               # clear store + state for current project
     cortex status              # show project hash, event count, storage tier
     cortex init                # print hook JSON for Claude Code settings
+    cortex init --setup        # also create .claude/rules/ files
+    cortex init --setup --force  # overwrite existing .claude/rules/ files
     cortex upgrade             # migrate from Tier 0 (JSON) to Tier 1 (SQLite)
     cortex upgrade --dry-run   # show what would be done without making changes
     cortex upgrade --force     # overwrite existing SQLite database
@@ -27,7 +29,7 @@ from cortex.hooks import (
     read_payload,
 )
 
-USAGE = "Usage: cortex <stop|precompact|session-start|user-prompt-submit|reset|status|init|upgrade|mcp-server>\n"
+USAGE = "Usage: cortex <stop|precompact|session-start|user-prompt-submit|reset|status|init|upgrade|mcp-server>\n\nCommands:\n  init [--setup] [--force]  Print hook JSON; --setup creates .claude/rules/ files\n  upgrade [--dry-run] [-f]  Migrate to next storage tier\n  status                    Show project info and event count\n  reset                     Clear all Cortex memory for project\n  mcp-server                Start MCP server (Tier 3)\n"
 
 
 def main() -> None:
@@ -46,7 +48,10 @@ def main() -> None:
     if arg == "status":
         sys.exit(cmd_status())
     if arg == "init":
-        sys.exit(cmd_init())
+        # Parse --setup and --force flags
+        setup = "--setup" in sys.argv or "-s" in sys.argv
+        force = "--force" in sys.argv or "-f" in sys.argv
+        sys.exit(cmd_init(setup=setup, force=force))
     if arg == "upgrade":
         # Parse --dry-run and --force flags
         dry_run = "--dry-run" in sys.argv or "-n" in sys.argv
