@@ -8,6 +8,8 @@ Claude Code settings. Upgrade migrates from Tier 0 (JSON) to Tier 1 (SQLite).
 import json
 import os
 import sys
+from importlib import resources
+from pathlib import Path
 
 from cortex.config import load_config
 from cortex.db import check_fts5_available, get_db_path
@@ -219,6 +221,66 @@ def cmd_upgrade(cwd: str | None = None, dry_run: bool = False, force: bool = Fal
         return 1
 
 
+def setup_claude_rules(cwd: str, force: bool = False) -> dict:
+    """Create .claude/rules/ directory and copy Cortex template files.
+
+    Creates:
+    - .claude/rules/cortex-memory-instructions.md (from package template)
+    - .claude/rules/cortex-briefing.md (empty placeholder)
+
+    Args:
+        cwd: Project directory to set up.
+        force: If True, overwrite existing files.
+
+    Returns:
+        Dict with 'created', 'skipped', and 'errors' lists.
+    """
+    result: dict = {"created": [], "skipped": [], "errors": []}
+
+    # Validate cwd is not empty or whitespace
+    if not cwd or not cwd.strip():
+        result["errors"].append("Invalid project directory: cwd is empty or whitespace")
+        return result
+
+    project_path = Path(cwd.strip())
+    rules_dir = project_path / ".claude" / "rules"
+
+    # Create .claude/rules/ directory
+    try:
+        rules_dir.mkdir(parents=True, exist_ok=True)
+    except OSError as e:
+        result["errors"].append(f"Failed to create {rules_dir}: {e}")
+        return result
+
+    # Copy cortex-memory-instructions.md from package templates
+    memory_instructions_dest = rules_dir / "cortex-memory-instructions.md"
+    if memory_instructions_dest.exists() and not force:
+        result["skipped"].append(str(memory_instructions_dest))
+    else:
+        try:
+            # Use importlib.resources to get template from package
+            template_files = resources.files("cortex.templates")
+            template_content = (template_files / "cortex-memory-instructions.md").read_text()
+            memory_instructions_dest.write_text(template_content)
+            result["created"].append(str(memory_instructions_dest))
+        except Exception as e:
+            result["errors"].append(f"Failed to create {memory_instructions_dest}: {e}")
+
+    # Create empty cortex-briefing.md
+    briefing_dest = rules_dir / "cortex-briefing.md"
+    if briefing_dest.exists() and not force:
+        result["skipped"].append(str(briefing_dest))
+    else:
+        try:
+            briefing_content = "<!-- Cortex briefing - auto-populated by cortex session-start -->\n"
+            briefing_dest.write_text(briefing_content)
+            result["created"].append(str(briefing_dest))
+        except Exception as e:
+            result["errors"].append(f"Failed to create {briefing_dest}: {e}")
+
+    return result
+
+
 def get_init_hook_json(include_tier2: bool = False, include_tier3: bool = False) -> str:
     """Return the hook configuration JSON for Claude Code settings.
 
@@ -253,12 +315,46 @@ def get_init_hook_json(include_tier2: bool = False, include_tier3: bool = False)
     return json.dumps({"hooks": hooks}, indent=2)
 
 
-def cmd_init() -> int:
-    """Print hook configuration JSON to stdout for copy-paste into Claude Code settings.
+def cmd_init(cwd: str | None = None, setup: bool = False, force: bool = False) -> int:
+    """Print hook configuration JSON and optionally set up .claude/rules/ files.
 
     If current project is Tier 2+, includes UserPromptSubmit hook for anticipatory retrieval.
     If Tier 3, includes projection regeneration and MCP server instructions.
+
+    Args:
+        cwd: Working directory (uses os.getcwd() if None).
+        setup: If True, create .claude/rules/ with Cortex template files.
+        force: If True, overwrite existing files (only used with setup=True).
+
+    Returns:
+        0 on success, 1 on error.
     """
+    work_dir = (os.getcwd() if cwd is None else cwd).strip()
+
+    # Handle --setup: create .claude/rules/ files
+    if setup:
+        if not work_dir:
+            print("Cortex init: no cwd.", file=sys.stderr)
+            return 1
+
+        result = setup_claude_rules(work_dir, force=force)
+
+        # Report results
+        if result["created"]:
+            for path in result["created"]:
+                print(f"Created: {path}")
+        if result["skipped"]:
+            for path in result["skipped"]:
+                print(f"Skipped (exists): {path}")
+            if not force:
+                print("Use --force to overwrite existing files.", file=sys.stderr)
+        if result["errors"]:
+            for error in result["errors"]:
+                print(f"Error: {error}", file=sys.stderr)
+            return 1
+
+        print()  # Blank line before hook JSON
+
     config = load_config()
     include_tier2 = config.storage_tier >= 2 or config.auto_embed
     include_tier3 = config.storage_tier >= 3 or config.projections_enabled
@@ -272,5 +368,8 @@ def cmd_init() -> int:
         print("\n# Tier 2+ detected: UserPromptSubmit hook included for anticipatory retrieval", file=sys.stderr)
     else:
         print("\n# Tip: Upgrade to Tier 2 and re-run 'cortex init' for anticipatory retrieval", file=sys.stderr)
+
+    if setup and result["created"]:
+        print("\n# Claude Code integration files created. Add the hooks JSON above to your settings.", file=sys.stderr)
 
     return 0
