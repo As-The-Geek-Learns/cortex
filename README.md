@@ -307,7 +307,18 @@ Cortex provides three hook handlers that Claude Code invokes with JSON payloads 
 
 Ensure the `cortex` entry point is on your PATH (e.g. `pip install -e .` in this repo). Claude Code sends a JSON object on stdin with fields such as `session_id`, `cwd`, and (for Stop) `transcript_path` and `stop_hook_active`. Cortex expects the payload schema described in the [research paper](docs/research/paper/cortex-research-paper.md) (Appendix E and §9.8). Briefings are written to `.claude/rules/cortex-briefing.md` in the project directory and are loaded automatically at session start.
 
-**First-time setup:** Install the package (`pip install -e .` or `pip install cortex`), then run `cortex init` and add the printed JSON to your Claude Code hooks configuration (see [Claude Code hooks documentation](https://code.claude.com/docs/en/hooks-guide)). For Layer 3 extraction, copy `templates/cortex-memory-instructions.md` to your project's `.claude/rules/` so Claude knows to use `[MEMORY: ...]` for important facts.
+**First-time setup:**
+
+```bash
+pip install -e .              # Install the package
+cortex init --setup           # Create .claude/rules/ files + print hook JSON
+```
+
+This creates:
+- `.claude/rules/cortex-memory-instructions.md` — Teaches Claude to use `[MEMORY: ...]` tags
+- `.claude/rules/cortex-briefing.md` — Placeholder for briefing content (auto-populated)
+
+Then add the printed JSON to your Claude Code hooks configuration. Use `--force` to overwrite existing files.
 
 **MCP Server setup (Tier 3):** Add to your Claude Code settings:
 ```json
@@ -332,6 +343,8 @@ This enables mid-session queries like "search my decisions about authentication"
 | `cortex upgrade` | Migrate to next tier (0→1: SQLite, 1→2: embeddings, 2→3: MCP) |
 | `cortex upgrade --dry-run` | Preview migration without making changes |
 | `cortex init` | Print hook configuration JSON for Claude Code settings |
+| `cortex init --setup` | Create `.claude/rules/` files + print hook JSON |
+| `cortex init --setup --force` | Overwrite existing `.claude/rules/` files |
 | `cortex mcp-server` | Start MCP server (Tier 3, stdio transport) |
 
 Example `cortex status` output (Tier 3):
