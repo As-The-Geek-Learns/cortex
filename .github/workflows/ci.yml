@@ -1,7 +1,7 @@
 # =============================================================================
 # CI Workflow for cortex
 # =============================================================================
-# Runs on every push and pull request to main.
+# Runs on every push to main, on all pull requests, and weekly on main.
 #
 # Jobs:
 #   1. python-quality       - Lint and format check Python code
@@ -12,6 +12,24 @@
 #   6. security-scan        - Semgrep static analysis
 #   7. secrets-scan         - Gitleaks for accidentally committed secrets
 #   8. workflow-verify      - Ironclad workflow gate (verify + ship dry-run)
+#
+# WHY every `uses:` is pinned to a full-length commit SHA: a tag is a mutable
+# pointer, so `actions/checkout@v6` runs whatever code that tag resolves to on
+# the day the job starts. An org-level policy on As-The-Geek-Learns now
+# requires SHA pins and rejects tag refs at "Set up job", before any step of
+# any job runs. The trailing `# v6` comment keeps the pin human-readable and
+# is the half Dependabot rewrites alongside the SHA when it bumps an action —
+# do not drop it.
+#
+# WHY the weekly schedule: this workflow depends on things that change outside
+# the repo — org-level Actions policy, the Semgrep rulesets, and a Gitleaks
+# tarball fetched from a GitHub release URL. Event triggers alone only exercise
+# main when someone pushes, so drift stays invisible until an unrelated PR
+# trips over it. That already happened here: main's last CI run was 2026-02-24,
+# the SHA-pinning policy landed sometime between 2026-05-11 (the last PR run
+# that still passed) and 2026-08-02, and main kept showing a stale green the
+# whole time — the breakage only surfaced when PR #55 failed at "Set up job".
+# A weekly run on main bounds that blind spot to 7 days.
 # =============================================================================
 
 name: CI
@@ -21,9 +39,19 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  schedule:
+    # Mondays 07:17 UTC. Off the hour on purpose — scheduled jobs queue behind
+    # the crowd that picks :00, and GitHub may drop runs under peak load.
+    - cron: '17 7 * * 1'
+  workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  # event_name is part of the key so the weekly run and a push to main — which
+  # share a ref — cannot cancel each other. Without it, cancel-in-progress lets
+  # a scheduled run kill an in-flight push run on main (and vice versa), leaving
+  # a "cancelled" result where a real pass/fail verdict should be. Runs of the
+  # same event still supersede each other as before.
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 permissions:
@@ -44,10 +72,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.11"
 
@@ -71,10 +99,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.11"
 
@@ -95,10 +123,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.11"
 
@@ -123,10 +151,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.11"
 
@@ -152,10 +180,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.11"
 
@@ -173,7 +201,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Run Semgrep
         uses: returntocorp/semgrep-action@713efdd345f3035192eaa63f56867b88e63e4e5d # v1
@@ -197,7 +225,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
 
@@ -227,15 +255,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Set up Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: "20"
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.11"
 
