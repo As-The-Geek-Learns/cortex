@@ -80,11 +80,15 @@ jobs:
           python-version: "3.11"
 
       - name: Install Ruff
-        # -c pins to the version in requirements-dev.txt without installing the
-        # rest of it. A bare `pip install ruff` takes whatever is newest, which
-        # is how Ruff 0.16 silently replaced the pinned 0.15.1 and started
-        # reformatting Markdown code blocks (see #57).
-        run: pip install ruff -c requirements-dev.txt
+        # -c pins to the version in requirements-tools.txt without installing
+        # the rest of it. A bare `pip install ruff` takes whatever is newest,
+        # which is how Ruff 0.16 silently replaced the pinned 0.15.1 and started
+        # reformatting Markdown code blocks (see #57). Constraining against
+        # requirements-tools.txt rather than requirements-dev.txt matters: the
+        # latter includes `-r requirements.txt`, and pip resolves a constraints
+        # file in full, so it dragged in sentence-transformers/torch metadata
+        # and took 62s instead of 2s.
+        run: pip install ruff -c requirements-tools.txt
 
       - name: Run Ruff Linter
         run: ruff check . --output-format=github
@@ -111,7 +115,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install mypy
-        run: pip install mypy -c requirements-dev.txt
+        run: pip install mypy -c requirements-tools.txt
 
       - name: Run mypy
         run: mypy src/cortex --ignore-missing-imports
@@ -138,7 +142,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Install pip-audit
-        run: pip install pip-audit -c requirements-dev.txt
+        run: pip install pip-audit -c requirements-tools.txt
 
       - name: Run pip-audit
         run: pip-audit --strict --vulnerability-service pypi
@@ -163,7 +167,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt pytest -c requirements-dev.txt
+        run: pip install -r requirements.txt pytest -c requirements-tools.txt
 
       - name: Run tests
         run: pytest tests/ -v
@@ -272,7 +276,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install Python dependencies
-        run: pip install -r requirements.txt pytest ruff pip-audit -c requirements-dev.txt
+        run: pip install -r requirements.txt pytest ruff pip-audit -c requirements-tools.txt
 
       - name: Run workflow verify
         # Skip AI review in CI - it's non-deterministic and useful for local dev only

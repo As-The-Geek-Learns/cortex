@@ -2,31 +2,14 @@
 # Cortex Development Dependencies
 # =============================================================================
 # Install: pip install -r requirements-dev.txt
+#
+# The tool versions themselves live in requirements-tools.txt so CI can use that
+# file as a pip constraints file cheaply -- see the header there for why. This
+# file stays the one command a developer needs.
 # =============================================================================
 
 # Include runtime dependencies
 -r requirements.txt
 
-# -----------------------------------------------------------------------------
-# Testing
-# -----------------------------------------------------------------------------
-pytest==9.0.2
-pytest-cov==7.0.0
-pytest-mock==3.15.1
-
-# -----------------------------------------------------------------------------
-# Code Quality
-# -----------------------------------------------------------------------------
-ruff==0.15.1
-mypy==1.19.1
-
-# -----------------------------------------------------------------------------
-# Security Scanning
-# -----------------------------------------------------------------------------
-pip-audit==2.10.0
-semgrep==1.151.0
-
-# -----------------------------------------------------------------------------
-# Git Hooks
-# -----------------------------------------------------------------------------
-pre-commit==4.5.1
+# Pinned developer tooling (also used by CI via `-c requirements-tools.txt`)
+-r requirements-tools.txt
