@@ -1,3 +1,20 @@
+# =============================================================================
+# Dependabot Auto-Merge
+# =============================================================================
+# Approves and enables auto-merge for Dependabot PRs -- but only for patch and
+# minor bumps.
+#
+# WHY the gate: this workflow used to fetch update metadata and then never read
+# it, so every Dependabot PR was approved and squash-merged unconditionally,
+# major versions included. The `minor-and-patch` group in dependabot.yml is the
+# routine bucket; majors are a deliberate decision and now wait for a human.
+#
+# Note this bounds blast radius, it does not eliminate it: `gh pr merge --auto`
+# only waits on the repo's REQUIRED checks, currently just Semgrep and Gitleaks.
+# A patch bump that breaks lint, types, or tests can still auto-merge until
+# those jobs are made required in the branch ruleset.
+# =============================================================================
+
 name: Dependabot Auto-Merge
 
 on: pull_request
@@ -18,6 +35,7 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
 
       - name: Approve PR
+        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
         run: |
           gh pr review --approve "$PR_URL"
         env:
@@ -25,8 +43,18 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
       - name: Enable auto-merge for Dependabot PRs
+        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
         run: |
           gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Explain skipped major bump
+        if: steps.metadata.outputs.update-type == 'version-update:semver-major'
+        run: |
+          gh pr comment "$PR_URL" --body "Auto-merge skipped: this is a **major** version bump (\`$UPDATE_TYPE\`), which needs a human decision. Review the changelog, then merge manually if you want it."
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          UPDATE_TYPE: ${{steps.metadata.outputs.update-type}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
