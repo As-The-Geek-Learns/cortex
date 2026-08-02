@@ -17,4 +17,4 @@ numpy>=1.24.0
 
 # sqlite-vec provides vector similarity search in SQLite
 # Used for semantic search in hybrid search (FTS5 + vectors)
-sqlite-vec>=0.1.0
+sqlite-vec>=0.1.9
