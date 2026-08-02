@@ -36,6 +36,14 @@ exclude = [
     "__pycache__",
     "venv",
     ".venv",
+    # Ruff 0.16 extended the formatter to Python code blocks inside Markdown,
+    # which silently widened `ruff format .` from 61 files to 110 and started
+    # rewriting illustrative snippets in prose docs (SECURITY-REVIEW.md, session
+    # notes, research phases). CI installs Ruff unpinned, so this landed with no
+    # code change on our side and only surfaced once CI could run again.
+    # The python-quality job exists to check Python source; docs are prose whose
+    # snippets are deliberately abbreviated and not always valid standalone.
+    "*.md",
 ]
 
 [tool.ruff.lint]
