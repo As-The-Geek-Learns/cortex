@@ -80,7 +80,11 @@ jobs:
           python-version: "3.11"
 
       - name: Install Ruff
-        run: pip install ruff
+        # -c pins to the version in requirements-dev.txt without installing the
+        # rest of it. A bare `pip install ruff` takes whatever is newest, which
+        # is how Ruff 0.16 silently replaced the pinned 0.15.1 and started
+        # reformatting Markdown code blocks (see #57).
+        run: pip install ruff -c requirements-dev.txt
 
       - name: Run Ruff Linter
         run: ruff check . --output-format=github
@@ -107,7 +111,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install mypy
-        run: pip install mypy
+        run: pip install mypy -c requirements-dev.txt
 
       - name: Run mypy
         run: mypy src/cortex --ignore-missing-imports
@@ -134,7 +138,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Install pip-audit
-        run: pip install pip-audit
+        run: pip install pip-audit -c requirements-dev.txt
 
       - name: Run pip-audit
         run: pip-audit --strict --vulnerability-service pypi
@@ -159,7 +163,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt pytest
+        run: pip install -r requirements.txt pytest -c requirements-dev.txt
 
       - name: Run tests
         run: pytest tests/ -v
@@ -268,7 +272,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install Python dependencies
-        run: pip install -r requirements.txt pytest ruff pip-audit
+        run: pip install -r requirements.txt pytest ruff pip-audit -c requirements-dev.txt
 
       - name: Run workflow verify
         # Skip AI review in CI - it's non-deterministic and useful for local dev only
