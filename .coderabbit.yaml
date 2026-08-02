@@ -76,22 +76,22 @@ reviews:
     unit_tests:
       enabled: true
 
-# Enable linters that match local tooling
-tools:
-  ruff:
-    enabled: true
-  eslint:
-    enabled: true
-  shellcheck:
-    enabled: true
-  markdownlint:
-    enabled: true
-  gitleaks:
-    enabled: true
-  yamllint:
-    enabled: true
-  actionlint:
-    enabled: true
+  # Enable linters that match local tooling
+  tools:
+    ruff:
+      enabled: true
+    eslint:
+      enabled: true
+    shellcheck:
+      enabled: true
+    markdownlint:
+      enabled: true
+    gitleaks:
+      enabled: true
+    yamllint:
+      enabled: true
+    actionlint:
+      enabled: true
 
 chat:
   auto_reply: true
