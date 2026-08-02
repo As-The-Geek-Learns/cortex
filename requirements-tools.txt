@@ -1,0 +1,43 @@
+# =============================================================================
+# Cortex Developer Tool Pins
+# =============================================================================
+# The exact versions of the tools that run in CI. Pulled out of
+# requirements-dev.txt so CI can use it as a pip CONSTRAINTS file:
+#
+#   pip install ruff -c requirements-tools.txt
+#
+# WHY it is a separate file: a constraints file is fully resolved even when
+# nothing in it is being installed. requirements-dev.txt starts with
+# `-r requirements.txt`, so using it as constraints made pip resolve
+# sentence-transformers (and therefore torch) metadata just to install Ruff --
+# measured at 62s versus 2s. This file has no includes, so constraining against
+# it costs nothing.
+#
+# Humans still install requirements-dev.txt; it pulls this in via `-r`, so these
+# versions remain the single source of truth. Dependabot tracks the file because
+# the name matches its requirements*.txt discovery pattern.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Testing
+# -----------------------------------------------------------------------------
+pytest==9.0.2
+pytest-cov==7.0.0
+pytest-mock==3.15.1
+
+# -----------------------------------------------------------------------------
+# Code Quality
+# -----------------------------------------------------------------------------
+ruff==0.15.1
+mypy==1.19.1
+
+# -----------------------------------------------------------------------------
+# Security Scanning
+# -----------------------------------------------------------------------------
+pip-audit==2.10.0
+semgrep==1.151.0
+
+# -----------------------------------------------------------------------------
+# Git Hooks
+# -----------------------------------------------------------------------------
+pre-commit==4.5.1
