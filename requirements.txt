@@ -13,7 +13,7 @@
 # For CPU-only (recommended for most users): pip install sentence-transformers
 # The model itself is ~90MB and downloads on first use.
 sentence-transformers>=3.1.0
-numpy>=1.24.0
+numpy>=2.4.6
 
 # sqlite-vec provides vector similarity search in SQLite
 # Used for semantic search in hybrid search (FTS5 + vectors)
