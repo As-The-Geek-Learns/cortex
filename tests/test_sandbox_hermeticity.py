@@ -1,7 +1,7 @@
 """Tests that the Phase 2 test sandbox cannot touch the surrounding repository.
 
 Tests cover:
-- TestEnvironment.setup() stays hermetic when an ambient GIT_DIR is present
+- TestEnvironment.setup() stays hermetic under each ambient git variable
 - the guard in setup() raises, rather than proceeding, if the scrub regresses
 
 WHY these exist: git honours GIT_DIR from the environment even when cwd= points
@@ -12,6 +12,7 @@ files into its index, creating a commit, and renaming its branch to main. Every 
 those git calls returns 0 and is run with capture_output=True, so nothing surfaced.
 """
 
+import hashlib
 import os
 import subprocess
 from pathlib import Path
@@ -56,14 +57,34 @@ def victim_repo(tmp_path: Path) -> Path:
 
 
 def _snapshot(repo: Path) -> dict:
-    """Capture every property the unscrubbed git calls would have damaged."""
+    """Capture every property the unscrubbed git calls would have damaged.
+
+    Includes the object store and the raw index, not just the porcelain output:
+    GIT_OBJECT_DIRECTORY and GIT_INDEX_FILE redirect writes at those two files
+    specifically, and they do it while `git rev-parse --absolute-git-dir` still
+    reports the sandbox. A snapshot built only from config and rev-list would
+    show no difference.
+    """
+    objects_dir = repo / ".git" / "objects"
+    index = repo / ".git" / "index"
     return {
         "email": _git(["git", "config", "--get", "user.email"], repo),
         "branch": _git(["git", "rev-parse", "--abbrev-ref", "HEAD"], repo),
         "commits": _git(["git", "rev-list", "--count", "HEAD"], repo),
         "staged": _git(["git", "diff", "--cached", "--name-only"], repo),
         "bare": _git(["git", "config", "--get", "core.bare"], repo),
+        "objects": sorted(str(p.relative_to(objects_dir)) for p in objects_dir.rglob("*") if p.is_file()),
+        "index": hashlib.sha256(index.read_bytes()).hexdigest() if index.exists() else None,
     }
+
+
+def _hostile_value(var: str, repo: Path) -> str:
+    """The value of `var` that would point git at `repo` instead of the sandbox."""
+    return {
+        "GIT_DIR": str(repo / ".git"),
+        "GIT_INDEX_FILE": str(repo / ".git" / "index"),
+        "GIT_OBJECT_DIRECTORY": str(repo / ".git" / "objects"),
+    }[var]
 
 
 # =============================================================================
@@ -71,10 +92,22 @@ def _snapshot(repo: Path) -> dict:
 # =============================================================================
 
 
-def test_sandbox_is_hermetic_under_ambient_git_dir(victim_repo, monkeypatch):
-    """An inherited GIT_DIR must not redirect the sandbox at another repo."""
+@pytest.mark.parametrize(
+    "var",
+    ["GIT_DIR", "GIT_INDEX_FILE", "GIT_OBJECT_DIRECTORY"],
+)
+def test_sandbox_is_hermetic_under_ambient_git_var(victim_repo, monkeypatch, var):
+    """No inherited git variable may redirect the sandbox at another repo.
+
+    Parametrised because the git-dir guard in setup() only catches the GIT_DIR case.
+    GIT_INDEX_FILE and GIT_OBJECT_DIRECTORY leave --absolute-git-dir pointing at the
+    sandbox, so the guard passes while writes land in the victim -- measured
+    2026-08-08: with GIT_OBJECT_DIRECTORY set, three sandbox objects (including the
+    file's blob) were written into the victim's object store. For those two the env
+    scrub is the ONLY protection, so it needs its own regression coverage.
+    """
     before = _snapshot(victim_repo)
-    monkeypatch.setenv("GIT_DIR", str(victim_repo / ".git"))
+    monkeypatch.setenv(var, _hostile_value(var, victim_repo))
 
     env = SandboxEnvironment()
     env.setup()
