@@ -254,7 +254,7 @@ cortex init              # Print updated hooks with MCP config
 - Full MCP protocol compliance for mid-session queries
 - Sub-second projection generation
 
-All tiers implemented. See [releases](https://github.com/As-The-Geek-Learns/cortex/releases) for version history.
+All tiers implemented. See [releases](https://github.com/Jmeg8r/cortex/releases) for version history.
 
 ## Development Setup
 
@@ -275,7 +275,7 @@ pre-commit run --all-files  # All hooks
 
 ## Development Workflow (Ironclad)
 
-This project uses a 4-phase workflow: **PLAN → EXECUTE → VERIFY → SHIP** with human checkpoints. Workflow adapted from [Ironclad Development Workflow](https://github.com/As-The-Geek-Learns/WorkflowExperiment).
+This project uses a 4-phase workflow: **PLAN → EXECUTE → VERIFY → SHIP** with human checkpoints. Workflow adapted from [Ironclad Development Workflow](https://github.com/Jmeg8r/ironclad-workflow).
 
 - **PLAN:** Create `.workflow/sessions/SESSION-YYYY-MM-DD-[slug]/plan.md` from `.workflow/templates/plan-template.md`; get approval before coding.
 - **EXECUTE:** Implement tasks; update session docs; run `npm run lint` / `ruff check .` as you go.

@@ -10,7 +10,7 @@
 
 > An event-sourced memory architecture for AI coding assistants. Solving the context window boundary problem through automatic session continuity.
 
-**Repository:** [cortex](https://github.com/As-The-Geek-Learns/cortex)
+**Repository:** [cortex](https://github.com/Jmeg8r/cortex)
 
 **Status:** Tier 0 Implementation COMPLETE | Real-World Testing IN PROGRESS
 
