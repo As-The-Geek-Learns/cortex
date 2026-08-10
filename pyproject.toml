@@ -10,9 +10,9 @@ requires-python = ">=3.11"
 dependencies = []
 
 [project.optional-dependencies]
-tier2 = ["sentence-transformers>=3.1.0", "numpy>=1.24.0"]
+tier2 = ["sentence-transformers>=5.6.1", "numpy>=1.24.0"]
 tier3 = ["mcp>=1.0.0"]
-all = ["sentence-transformers>=3.1.0", "numpy>=1.24.0", "mcp>=1.0.0"]
+all = ["sentence-transformers>=5.6.1", "numpy>=1.24.0", "mcp>=1.0.0"]
 
 [project.scripts]
 cortex = "cortex.__main__:main"
