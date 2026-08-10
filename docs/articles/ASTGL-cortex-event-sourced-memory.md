@@ -307,7 +307,7 @@ The AI assistant finally remembers.
 
 ## References
 
-- [Cortex GitHub Repository](https://github.com/As-The-Geek-Learns/cortex)
+- [Cortex GitHub Repository](https://github.com/Jmeg8r/cortex)
 - [Full Research Paper](docs/research/paper/cortex-research-paper.md)
 - [A/B Comparison Results](docs/testing/AB-COMPARISON-RESULTS.md)
-- [v0.3.0 Release Notes](https://github.com/As-The-Geek-Learns/cortex/releases/tag/v0.3.0)
+- [v0.3.0 Release Notes](https://github.com/Jmeg8r/cortex/releases/tag/v0.3.0)
